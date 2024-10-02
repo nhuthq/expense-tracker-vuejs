@@ -33,6 +33,7 @@ import { useToast } from "vue-toast-notification";
 const name = ref("");
 const amount = ref("");
 const toast = useToast();
+const emit = defineEmits(["onSubmitTransaction"]);
 
 const onSubmit = () => {
   if (!name.value || !amount.value) {
@@ -40,6 +41,13 @@ const onSubmit = () => {
 
     return;
   }
+
+  const transactionData = {
+    name: name.value,
+    amount: parseFloat(amount.value),
+  };
+
+  emit("onSubmitTransaction", transactionData);
 
   name.value = "";
   amount.value = "";
