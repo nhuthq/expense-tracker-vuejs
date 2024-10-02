@@ -12,7 +12,7 @@
 </template>
 
 <script setup>
-import { ref } from "vue";
+import { onMounted, ref } from "vue";
 import { computed } from "vue";
 import { useToast } from "vue-toast-notification";
 import Header from "./components/Header.vue";
@@ -22,17 +22,16 @@ import IncomeExpense from "./components/IncomeExpense.vue";
 import AddTransaction from "./components/AddTransaction.vue";
 import TransactionList from "./components/TransactionList.vue";
 
+onMounted(() => {
+  const savedTransactions = JSON.parse(localStorage.getItem("transactions"));
+  if (savedTransactions) {
+    transactions.value = savedTransactions;
+  }
+});
+
 const toast = useToast();
 
-const transactions = ref([
-  { id: 1, name: "Americano", amount: -5.0 },
-  { id: 2, name: "Breakfast", amount: -3.99 },
-  { id: 3, name: "Salary", amount: 1000.0 },
-  { id: 4, name: "Lunch", amount: -4.99 },
-  { id: 5, name: "Book", amount: -2.0 },
-  { id: 5, name: "Coffee", amount: -5.0 },
-  { id: 6, name: "Course", amount: 50.0 },
-]);
+const transactions = ref([]);
 
 // Get total
 const total = computed(() => {
@@ -68,6 +67,8 @@ const handleSubmitTransaction = (transactionData) => {
     amount: transactionData.amount,
   });
 
+  saveTransactionsToLocal();
+
   toast.success("Transaction add successfully!");
 };
 
@@ -75,10 +76,15 @@ const handleDeleteTransaction = (id) => {
   transactions.value = transactions.value.filter(
     (transaction) => transaction.id !== id
   );
+  saveTransactionsToLocal();
   toast.success("Transaction delete successfully!");
 };
 
 const generateUniqueId = () => {
   return Math.floor(Math.random() * 10000000);
+};
+
+const saveTransactionsToLocal = () => {
+  localStorage.setItem("transactions", JSON.stringify(transactions.value));
 };
 </script>
