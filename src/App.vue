@@ -27,6 +27,7 @@ onMounted(() => {
   if (savedTransactions) {
     transactions.value = savedTransactions;
   }
+  updateValues;
 });
 
 const toast = useToast();
@@ -62,13 +63,12 @@ const expenses = computed(() => {
 
 const handleSubmitTransaction = (transactionData) => {
   transactions.value.push({
-    id: generateUniqueId,
+    id: generateUniqueId(),
     name: transactionData.name,
     amount: transactionData.amount,
   });
 
-  saveTransactionsToLocal();
-
+  updateLocalStorage();
   toast.success("Transaction add successfully!");
 };
 
@@ -76,7 +76,7 @@ const handleDeleteTransaction = (id) => {
   transactions.value = transactions.value.filter(
     (transaction) => transaction.id !== id
   );
-  saveTransactionsToLocal();
+  updateLocalStorage();
   toast.success("Transaction delete successfully!");
 };
 
@@ -84,7 +84,7 @@ const generateUniqueId = () => {
   return Math.floor(Math.random() * 10000000);
 };
 
-const saveTransactionsToLocal = () => {
+const updateLocalStorage = () => {
   localStorage.setItem("transactions", JSON.stringify(transactions.value));
 };
 </script>
